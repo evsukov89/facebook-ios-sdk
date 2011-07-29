@@ -20,18 +20,15 @@
 #import "FBLoginButton.h"
 
 
-@interface DemoAppViewController : UIViewController
-<FBRequestDelegate,
-FBDialogDelegate,
-FBSessionDelegate>{
-  IBOutlet UILabel* _label;
-  IBOutlet FBLoginButton* _fbButton;
-  IBOutlet UIButton* _getUserInfoButton;
-  IBOutlet UIButton* _getPublicInfoButton;
-  IBOutlet UIButton* _publishButton;
-  IBOutlet UIButton* _uploadPhotoButton;
-  Facebook* _facebook;
-  NSArray* _permissions;
+@interface DemoAppViewController : UIViewController {
+    IBOutlet UILabel* _label;
+    IBOutlet FBLoginButton* _fbButton;
+    IBOutlet UIButton* _getUserInfoButton;
+    IBOutlet UIButton* _getPublicInfoButton;
+    IBOutlet UIButton* _publishButton;
+    IBOutlet UIButton* _uploadPhotoButton;
+    Facebook* _facebook;
+    NSArray* _permissions;
 }
 
 @property(nonatomic, retain) UILabel* label;
