@@ -60,6 +60,7 @@ static NSString* kAppId = @"144552878926641";
     _getPublicInfoButton.hidden = YES;
     _publishButton.hidden = YES;
     _uploadPhotoButton.hidden = YES;
+    _uploadPhotoProgressView.hidden = YES;
     _fbButton.isLoggedIn = NO;
     [_fbButton updateImage];
 }
@@ -74,6 +75,7 @@ static NSString* kAppId = @"144552878926641";
     [_getPublicInfoButton release];
     [_publishButton release];
     [_uploadPhotoButton release];
+    [_uploadPhotoProgressView release];
     [_facebook release];
     [_permissions release];
     [super dealloc];
@@ -94,6 +96,7 @@ static NSString* kAppId = @"144552878926641";
             _getPublicInfoButton.hidden = NO;
             _publishButton.hidden = NO;
             _uploadPhotoButton.hidden = NO;
+            _uploadPhotoProgressView.hidden = NO;
             _fbButton.isLoggedIn = YES;
             [_fbButton updateImage];            
         }
@@ -118,6 +121,7 @@ static NSString* kAppId = @"144552878926641";
         _getPublicInfoButton.hidden   = YES;
         _publishButton.hidden        = YES;
         _uploadPhotoButton.hidden = YES;
+        _uploadPhotoProgressView.hidden = YES;
         _fbButton.isLoggedIn         = NO;
         [_fbButton updateImage];
     }];
@@ -222,7 +226,9 @@ static NSString* kAppId = @"144552878926641";
  * Upload a photo.
  */
 - (IBAction)uploadPhoto:(id)sender {
-    NSString *path = @"http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
+    //NSString *path = @"http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
+    //used a larger picture to be able display progress
+    NSString *path = @"http://icanhascheezburger.files.wordpress.com/2011/06/funny-pictures-nyan-cat-wannabe1.jpg";
     NSURL *url = [NSURL URLWithString:path];
     NSData *data = [NSData dataWithContentsOfURL:url];
     UIImage *img  = [[UIImage alloc] initWithData:data];
@@ -232,6 +238,12 @@ static NSString* kAppId = @"144552878926641";
                                    nil];
     
     FBRequest *request = [_facebook buildRequestWithGraphPath:@"me/photos" params:params httpMethod:@"POST"];
+    
+    _uploadPhotoProgressView.progress = 0.0f;
+    request.uploadProgressHandler = ^(float progress){
+        NSLog(@"%s:%f",__PRETTY_FUNCTION__,progress);
+        _uploadPhotoProgressView.progress = progress;
+    };
     [request performWithCompletionHandler:^(NSURLResponse* response, id result, NSError* error){
         NSLog(@"%s:%@ - %@ - %@",__PRETTY_FUNCTION__,response,result,error);
         if (error) {

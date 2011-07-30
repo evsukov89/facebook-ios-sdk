@@ -27,6 +27,7 @@
     IBOutlet UIButton* _getPublicInfoButton;
     IBOutlet UIButton* _publishButton;
     IBOutlet UIButton* _uploadPhotoButton;
+    IBOutlet UIProgressView* _uploadPhotoProgressView;
     Facebook* _facebook;
     NSArray* _permissions;
 }

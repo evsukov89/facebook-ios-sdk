@@ -21,7 +21,8 @@ typedef enum {
     FBAuthorizeResultUserDidLogin = 0,
     FBAuthorizeResultUserDidNotLogin,
     FBAuthorizeResultUserDidCanceled,
-    FBAuthorizeResultUserDidLogout
+    FBAuthorizeResultUserDidLogout,
+    FBAuthorizeResultUserDidNotLogout
 } FBAuthorizeResult;
 
 typedef void (^FBAuthorizeCompletionHandler) (FBAuthorizeResult result);

@@ -270,18 +270,39 @@ static NSString* kSDKVersion = @"2";
 }
 
 - (void)logoutWithCompletionHandler:(FBAuthorizeCompletionHandler)completionHandler {
-    [[self buildRequestWithGraphPath:@"auth.expireSession"] perform];
-    
-    self.accessToken = nil;
-    self.expirationDate = nil;
-
-    NSHTTPCookieStorage* cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    NSArray* facebookCookies = [cookies cookiesForURL:
-                                [NSURL URLWithString:@"http://login.facebook.com"]];
-
-    for (NSHTTPCookie* cookie in facebookCookies) {
-        [cookies deleteCookie:cookie];
-    }
+    //FBRequest *request = [self buildRequestWithGraphPath:@"auth.expireSession"];
+    FBRequest *request = [self buildRequestWithMethodName:@"auth.expireSession" params:[NSDictionary dictionary] httpMethod:@"GET"];
+    [request performWithCompletionHandler:^(NSURLResponse* response, id result, NSError* error){
+        if (error != nil) {
+            NSLog(@"%s: error during logout:%@",__PRETTY_FUNCTION__,error);
+            if (completionHandler != nil) {
+                completionHandler(FBAuthorizeResultUserDidNotLogout);
+            }
+        }
+        if (![result isKindOfClass:[NSDictionary class]] && 
+            [[result objectForKey:@"result"] boolValue] != true) {
+            NSLog(@"%s: error during logout:%@",__PRETTY_FUNCTION__,result);
+            if (completionHandler != nil) {
+                completionHandler(FBAuthorizeResultUserDidNotLogout);
+            }
+        }
+             
+        
+        self.accessToken = nil;
+        self.expirationDate = nil;
+        
+        NSHTTPCookieStorage* cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+        NSArray* facebookCookies = [cookies cookiesForURL:[NSURL URLWithString:@"http://login.facebook.com"]];
+        
+        for (NSHTTPCookie* cookie in facebookCookies) {
+            [cookies deleteCookie:cookie];
+        }
+        
+        if (completionHandler != nil) {
+            completionHandler(FBAuthorizeResultUserDidLogout);
+        }
+        
+    }];
 }
 
 #pragma mark - API requests methods
