@@ -300,12 +300,14 @@ static NSString* kSDKVersion = @"2";
 }
 
 - (FBRequest*)buildRequestWithMethodName:(NSString *)methodName params:(NSDictionary *)params httpMethod:(NSString *)httpMethod {
-    NSMutableDictionary *newParams = [params mutableCopy];
     
-    [newParams setObject:self.accessToken forKey:@"access_token"];
+    NSMutableDictionary *newParams = [params mutableCopy];
     [newParams setObject:@"json"          forKey:@"format"];
     [newParams setObject:kSDK             forKey:@"sdk"];
     [newParams setObject:kSDKVersion      forKey:@"sdk_version"];
+    if ([self isSessionValid]) {
+        [newParams setObject:self.accessToken forKey:@"access_token"];
+    }
     
     NSString *fullURL = [kRestserverBaseURL stringByAppendingString:methodName];
     
@@ -322,14 +324,16 @@ static NSString* kSDKVersion = @"2";
 
 - (FBRequest*)buildRequestWithGraphPath:(NSString *)graphPath params:(NSDictionary *)params httpMethod:(NSString *)httpMethod {
     NSMutableDictionary *newParams = [params mutableCopy];
-    
-    [newParams setObject:self.accessToken forKey:@"access_token"];
-    [newParams setObject:@"json" forKey:@"format"];
-    [newParams setObject:kSDK forKey:@"sdk"];
-    [newParams setObject:kSDKVersion forKey:@"sdk_version"];
+    [newParams setObject:@"json"          forKey:@"format"];
+    [newParams setObject:kSDK             forKey:@"sdk"];
+    [newParams setObject:kSDKVersion      forKey:@"sdk_version"];
+    if ([self isSessionValid]) {
+        [newParams setObject:self.accessToken forKey:@"access_token"];
+    }    
     
     NSURL *fullURL = [NSURL URLWithString:[kGraphBaseURL stringByAppendingString:graphPath]];
-    return [FBRequest requestWithURL:fullURL params:params httpMethod:httpMethod];
+    
+    return [FBRequest requestWithURL:fullURL params:newParams httpMethod:httpMethod];
 }
 
 #pragma mark - dialog methods

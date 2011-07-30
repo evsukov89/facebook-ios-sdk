@@ -107,13 +107,19 @@ static NSString* kAppId = @"144552878926641";
  * Invalidate the access token and clear the cookie.
  */
 - (void)logout {
-    //[_facebook logout:self];
     [_facebook logoutWithCompletionHandler:^(FBAuthorizeResult result){
         if (result != FBAuthorizeResultUserDidLogout) {
             NSLog(@"%s:error during logout",__PRETTY_FUNCTION__);
             return;
         }
         NSLog(@"%s:logged out",__PRETTY_FUNCTION__);
+        [self.label setText:@"Please log in"];
+        _getUserInfoButton.hidden    = YES;
+        _getPublicInfoButton.hidden   = YES;
+        _publishButton.hidden        = YES;
+        _uploadPhotoButton.hidden = YES;
+        _fbButton.isLoggedIn         = NO;
+        [_fbButton updateImage];
     }];
 }
 
@@ -135,8 +141,8 @@ static NSString* kAppId = @"144552878926641";
  * Make a Graph API Call to get information about the current logged in user.
  */
 - (IBAction)getUserInfo:(id)sender {
-    [[_facebook buildRequestWithGraphPath:@"me"] 
-     performWithCompletionHandler:^(NSURLResponse* response, id result, NSError* error){
+    FBRequest *request = [self.facebook buildRequestWithGraphPath:@"me"];
+    [request performWithCompletionHandler:^(NSURLResponse* response, id result, NSError* error){
          NSLog(@"%s:%@ - %@ - %@",__PRETTY_FUNCTION__,response,result,error);
          if (error) {
              self.label.text = [error localizedDescription];
@@ -160,7 +166,7 @@ static NSString* kAppId = @"144552878926641";
                                    dictionaryWithObject:@"SELECT uid,name FROM user WHERE uid=4" 
                                    forKey:@"query"];
     
-    FBRequest *request = [_facebook buildRequestWithMethodName:@"fql.query" params:params httpMethod:@"POST"];
+    FBRequest *request = [self.facebook buildRequestWithMethodName:@"fql.query" params:params httpMethod:@"POST"];
     [request performWithCompletionHandler:^(NSURLResponse* response, id result, NSError* error){
         NSLog(@"%s:%@ - %@ - %@",__PRETTY_FUNCTION__,response,result,error);
         if (error) {
@@ -245,45 +251,6 @@ static NSString* kAppId = @"144552878926641";
     }];
     
     [img release];
-}
-
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
-}
-
-
-///**
-// * Called when the user has logged in successfully.
-// */
-//- (void)fbDidLogin {
-//    [self.label setText:@"logged in"];
-//    _getUserInfoButton.hidden = NO;
-//    _getPublicInfoButton.hidden = NO;
-//    _publishButton.hidden = NO;
-//    _uploadPhotoButton.hidden = NO;
-//    _fbButton.isLoggedIn = YES;
-//    [_fbButton updateImage];
-//}
-//
-///**
-// * Called when the user canceled the authorization dialog.
-// */
-//-(void)fbDidNotLogin:(BOOL)cancelled {
-//    NSLog(@"did not login");
-//}
-
-/**
- * Called when the request logout has succeeded.
- */
-- (void)fbDidLogout {
-    [self.label setText:@"Please log in"];
-    _getUserInfoButton.hidden    = YES;
-    _getPublicInfoButton.hidden   = YES;
-    _publishButton.hidden        = YES;
-    _uploadPhotoButton.hidden = YES;
-    _fbButton.isLoggedIn         = NO;
-    [_fbButton updateImage];
 }
 
 @end
