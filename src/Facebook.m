@@ -195,6 +195,7 @@ static NSString* kSDKVersion = @"2";
 - (void)authorizeWithPersmissions:(NSArray*)permissions localAppId:(NSString *)aLocalAppId 
                 completionHandler:(FBAuthorizeCompletionHandler)completionHandler {
     
+    self.permissions = permissions;
     self.localAppId = aLocalAppId;
     self.authorizeResultCompletionHandler = completionHandler;
     self.authorizeResultCompletionHandlerQueue = [NSOperationQueue currentQueue];
